@@ -3,8 +3,6 @@ const video = player.querySelector('.viewer');
 
 const progress = player.querySelector('.progress');
 const progressBar = player.querySelector('.progress__filled');
-const toggle = player.querySelector('.toggle');
-const skipButtons = player.querySelectorAll('[data-skip]');
 const ranges = player.querySelectorAll('.player__slider');
 
 function togglePlay(e) {
@@ -21,6 +19,14 @@ function togglePlay(e) {
   }
 }
 
+let isMouseDown = false;
+function handleRangeChange() {
+  if (isMouseDown) {
+    video[this.name] = this.value;
+  }
+  video[this.name] = this.value;
+}
+
 function updateButton() {
   console.log('ran');
   const icon = this.paused ? '►' : '❚ ❚';
@@ -30,3 +36,10 @@ function updateButton() {
 player.addEventListener('click', togglePlay);
 video.addEventListener('play', updateButton);
 video.addEventListener('pause', updateButton);
+
+ranges.forEach(range => {
+  range.addEventListener('change', handleRangeChange);
+  range.addEventListener('mousedown', () => (isMouseDown = true));
+  range.addEventListener('mouseup', () => (isMouseDown = false));
+  range.addEventListener('mousemove', handleRangeChange);
+});
