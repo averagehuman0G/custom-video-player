@@ -4,6 +4,7 @@ const video = player.querySelector('.viewer');
 const progress = player.querySelector('.progress');
 const progressBar = player.querySelector('.progress__filled');
 const ranges = player.querySelectorAll('.player__slider');
+const toggle = player.querySelector('.toggle');
 
 function togglePlay(e) {
   // Since the event listener was added to the player any click will run this function
@@ -28,14 +29,30 @@ function handleRangeChange() {
 }
 
 function updateButton() {
-  console.log('ran');
   const icon = this.paused ? '►' : '❚ ❚';
   toggle.textContent = icon;
+}
+
+function handleProgress() {
+  const percent = video.currentTime / video.duration * 100;
+  progressBar.style.flexBasis = `${percent}%`;
+}
+
+function videoScrub(e) {
+  const scrubTime = e.offsetX / progress.offsetWidth * video.duration;
+  console.log(scrubTime);
+  video.currentTime = scrubTime;
 }
 
 player.addEventListener('click', togglePlay);
 video.addEventListener('play', updateButton);
 video.addEventListener('pause', updateButton);
+video.addEventListener('timeupdate', handleProgress);
+
+progress.addEventListener('click', videoScrub);
+progress.addEventListener('mousemove', e => isMouseDown && videoScrub(e));
+progress.addEventListener('mousedown', () => (isMouseDown = true));
+progress.addEventListener('mouseup', () => (isMouseDown = false));
 
 ranges.forEach(range => {
   range.addEventListener('change', handleRangeChange);
